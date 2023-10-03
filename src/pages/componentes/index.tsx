@@ -18,6 +18,9 @@ export function Componentes() {
             <FaClock />
             <Text>Texto</Text>
           </Box>
+          <Text>
+            Teste
+          </Text>
         </CardFooter>
       </Card>
     </Flex>
