@@ -11,16 +11,20 @@ import {
   Jobs,
   NewJob,
   Signin,
+  Signup,
   Users,
 } from '../pages';
 import { Layout } from '../components/Layout';
 import { ProtectedRoute } from './protectedRoute';
+import { Componentes } from '../pages/componentes';
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Layout />}>
       <Route index element={<Home />} />
+      <Route path="/componentes" element={<Componentes />} />
       <Route path="/signin" element={<Signin />} />
+      <Route path="/signup" element={<Signup />} />
       <Route
         path="/dashboard"
         handle={{

@@ -19,6 +19,8 @@ export function Main() {
 
   const { user } = useAuth();
 
+  const grayBackgroundPages = ["/signin", "/signup"] 
+
   return (
     <Flex
       as="main"
@@ -27,7 +29,7 @@ export function Main() {
       gap="4"
       py="4"
       px="8"
-      bgColor={location.pathname === '/signin' ? 'gray.100' : 'white'}
+      bgColor={grayBackgroundPages.includes(location.pathname) ? 'gray.100' : 'white'}
     >
       {user && (
         <Breadcrumb

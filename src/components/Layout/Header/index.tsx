@@ -39,7 +39,7 @@ export default function Header() {
                  <Button as={Link} to="/signin">
                  Entrar
                 </Button>
-                <Button >Cadastre-se gratuitamente</Button>
+                <Button as={Link} to="/signup">Cadastre-se gratuitamente</Button>
               </Flex>
             ) : (
               <Menu>
