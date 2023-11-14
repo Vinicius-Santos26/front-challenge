@@ -1,19 +1,19 @@
 import { createContext,  useState,  } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom';
 import { SigninDto } from '../types/signin';
-import { signIn } from '../services/auth';
+import { signIn, signUp } from '../services/auth';
 import { Role } from '../types/role';
-import * as api from '../services/api';
 import { Recruiter } from '../types/recruiter';
 import { User } from '../types/user';
 import { getRecruiterByUserId } from '../services/recruiters';
-import axios from 'axios';
+import { SignupDto } from '../types/signup';
 
 type AuthContextData  = {
   user: User | null,
   role: Role | null,
   recruiter: Recruiter | null,
   onLogin(signin: SigninDto): Promise<void>,
+  onSignUp(signupu: SignupDto): Promise<void>,
   onLogout(): void
 }
 
@@ -48,6 +48,23 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     navigate(origin);
   };
 
+  const handleSignUp = async (signup : SignupDto) => {
+    const {accessToken, user} = await signUp(signup);
+   
+    sessionStorage.setItem("@App:token", accessToken);
+
+    setUser(user);
+    setRole(user.role);
+
+    if(user.role === Role.RECRUITER){
+      const recruiter = await getRecruiterByUserId(user.id);
+      setRecruiter(recruiter);
+    }
+
+    const origin = location.state?.from?.pathname || '/dashboard';
+    navigate(origin);
+  }
+
   const handleLogout = () => {
     setUser(null);
   };
@@ -58,6 +75,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     recruiter,
     onLogin: handleLogin,
     onLogout: handleLogout,
+    onSignUp: handleSignUp
   };
 
   return (

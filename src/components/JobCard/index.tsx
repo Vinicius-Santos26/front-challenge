@@ -5,14 +5,21 @@ import {
   CardBody,
   CardFooter,
   CardHeader,
+  HStack,
   Heading,
   LinkBox,
   LinkOverlay,
   Text,
 } from '@chakra-ui/react';
 import { IoLocationSharp, IoPeopleSharp } from 'react-icons/io5';
+import { Job } from '../../types/job';
 
-export function JobCard() {
+type JobCardProps = {
+  job: Job;
+};
+
+export function JobCard(props: JobCardProps) {
+  const { job } = props;
   return (
     <LinkBox>
       <Card
@@ -25,9 +32,14 @@ export function JobCard() {
         <CardHeader padding="0">
           <LinkOverlay href="#">
             <Heading size="md">
-              Product Owner  <Badge colorScheme="purple">PCD</Badge> <Badge colorScheme="green">LGBT</Badge>
+              {job.position.name}
+              <HStack spacing="4">
+                {job.jobSocialVulnerabilities.map((v) => (
+                  <Badge key={v.name} colorScheme={v.color}>{v.name} </Badge>
+                ))}
+              </HStack>
             </Heading>
-            <Text>Pleno - 1 vaga</Text>
+            <Text>{job.jobLevel.name}  -  {job.quantity} vaga</Text>
           </LinkOverlay>
         </CardHeader>
         <CardBody display="flex" gap="2" alignItems="center" padding="0">
@@ -41,7 +53,8 @@ export function JobCard() {
           <Box color="brand.500">
             <IoLocationSharp size={24} />
           </Box>
-          <Text>Avenida Paulista - Bela Vista, São Paulo</Text>
+          <Text> {job.addressStreet}, {job.addressNumber} - {job.addressCity},{' '}
+            {job.state.name}</Text>
         </CardFooter>
       </Card>
     </LinkBox>

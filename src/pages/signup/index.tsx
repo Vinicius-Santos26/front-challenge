@@ -14,6 +14,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { z } from 'zod';
 import { useAuth } from '../../hooks/useAuth';
 import { SingleDatepicker } from 'chakra-dayzed-datepicker';
+import { SignupDto } from '../../types/signup';
 
 const validationSchema = z.object({
   firstName: z.string(),
@@ -25,14 +26,17 @@ const validationSchema = z.object({
   password: z
     .string()
     .min(1, { message: 'Senha é obrigatória' })
+    .min(8, { message: 'Senha tem que ter no mínimo 8 caracteres' }),
+  confirmPassword: z
+    .string()
+    .min(1, { message: 'Senha é obrigatória' })
     .min(8, { message: 'Senha tem que ter no mínimo 8 caracteres' })
-    .regex(/^(?=.*[a-z])/, {message: 'Pelo menos um caracter minusculo'})
 });
 
 type ValidationSchema = z.infer<typeof validationSchema>;
 
 export function Signup() {
-  const { onLogin } = useAuth();
+  const { onSignUp } = useAuth();
   const toast = useToast();
 
   const {
@@ -47,11 +51,13 @@ export function Signup() {
 
   async function handleSubmitNovaVaga(formData: ValidationSchema) {
     try {
-      await onLogin(formData);
+      console.log("oi")
+      const data: SignupDto= {firstName: formData.firstName, lastName: formData.lastName, email: formData.email, birthDate: formData.birthDate, password: formData.password}
+      await onSignUp(data);
     } catch (error) {
       toast({
         position: 'top-right',
-        title: `Email ou senha inválidos`,
+        title: `Erro ao cadastrar`,
         status: 'error',
         isClosable: true,
       });
@@ -83,42 +89,42 @@ export function Signup() {
         <Text>Conquiste o seu próximo emprego agora!</Text>
         <form onSubmit={handleSubmit(handleSubmitNovaVaga)} noValidate>
           <Flex flexDirection="column" gap="4">
-            <FormControl isInvalid={errors.email !== undefined}>
+            <FormControl isInvalid={errors.firstName !== undefined}>
               <FormLabel>Nome</FormLabel>
-              <Input type="text" {...register('email')} />
-              <FormErrorMessage>{errors.email?.message}</FormErrorMessage>
+              <Input type="text" {...register('firstName')} />
+              <FormErrorMessage>{errors.firstName?.message}</FormErrorMessage>
             </FormControl>
-            <FormControl isInvalid={errors.email !== undefined}>
+            <FormControl isInvalid={errors.lastName !== undefined}>
               <FormLabel>Sobrenome</FormLabel>
-              <Input type="text" {...register('email')} />
-              <FormErrorMessage>{errors.email?.message}</FormErrorMessage>
+              <Input type="text" {...register('lastName')} />
+              <FormErrorMessage>{errors.lastName?.message}</FormErrorMessage>
             </FormControl>
             <FormControl isInvalid={errors.email !== undefined}>
               <FormLabel>Data de nascimento</FormLabel>
-              <Controller 
+              <Controller
                 name="birthDate"
                 control={control}
-                render={({field}) => (
-                <SingleDatepicker
-                  configs={{
-                    dateFormat: 'dd/MM/yyyy'
-                  }}
-                  propsConfigs={{
-                    dayOfMonthBtnProps: {
-                      defaultBtnProps: {
-                        _hover:{
-                          background: "brand.500"
-                        }
-                      },
-                      selectedBtnProps: {
-                        backgroundColor: 'brand.500'
-                      },
-                    }
-                  }}
-                  name="date-input"
-                  date={field.value}
-                  onDateChange={(date) => field.onChange(date)}
-                />)}
+                render={({ field }) => (
+                  <SingleDatepicker
+                    configs={{
+                      dateFormat: 'dd/MM/yyyy'
+                    }}
+                    propsConfigs={{
+                      dayOfMonthBtnProps: {
+                        defaultBtnProps: {
+                          _hover: {
+                            background: "brand.500"
+                          }
+                        },
+                        selectedBtnProps: {
+                          backgroundColor: 'brand.500'
+                        },
+                      }
+                    }}
+                    name="date-input"
+                    date={field.value}
+                    onDateChange={(date) => field.onChange(date)}
+                  />)}
               />
               <FormErrorMessage>{errors.email?.message}</FormErrorMessage>
             </FormControl>
@@ -132,10 +138,10 @@ export function Signup() {
               <Input type="password" {...register('password')} />
               <FormErrorMessage>{errors.password?.message}</FormErrorMessage>
             </FormControl>
-            <FormControl isInvalid={errors.password !== undefined}>
+            <FormControl isInvalid={errors.confirmPassword !== undefined}>
               <FormLabel>Confirmar a senha</FormLabel>
-              <Input type="password"  />
-              <FormErrorMessage>{errors.password?.message}</FormErrorMessage>
+              <Input type="password"  {...register('confirmPassword')} />
+              <FormErrorMessage>{errors.confirmPassword?.message}</FormErrorMessage>
             </FormControl>
             <Button
               mt={4}

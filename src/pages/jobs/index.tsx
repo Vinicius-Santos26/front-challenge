@@ -18,7 +18,7 @@ import {
 import { JobItem } from '../../components/JobItem';
 import { Link } from 'react-router-dom';
 import { useQuery } from 'react-query';
-import { getJobs } from '../../services/jobs';
+import { getJobsByCompany } from '../../services/jobs';
 import { useAuth } from '../../hooks/useAuth';
 
 export function Jobs() {
@@ -26,7 +26,7 @@ export function Jobs() {
 
   const { data: jobs } = useQuery({
     queryKey: ['jobs'],
-    queryFn: () => getJobs(recruiter!.companyId),
+    queryFn: () => getJobsByCompany(recruiter!.companyId),
   });
 
   return (

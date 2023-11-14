@@ -8,8 +8,15 @@ export async function createJob(newJob: NewJobDto) {
   return data;
 }
 
-export async function getJobs(companyId:string): Promise<Job[]> {
+export async function getJobsByCompany(companyId:string): Promise<Job[]> {
   const { data } = await api.get(`/jobs/${companyId}`);
 
   return data;
 }
+
+export async function getJobs(): Promise<Job[]> {
+  const { data } = await api.get(`/jobs`);
+
+  return data;
+}
+

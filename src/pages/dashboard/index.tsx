@@ -3,10 +3,18 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { Role } from '../../types/role';
 import { JobCard } from '../../components/JobCard';
+import { useQuery } from 'react-query';
+import { getJobsByCompany } from '../../services/jobs';
 
 export function Dashboard() {
-  const { role } = useAuth();
-  console.log(role, Role.ADMINISTRATOR);
+  const { role, recruiter } = useAuth();
+
+  const { data: jobs } = useQuery({
+    queryKey: ['jobs'],
+    queryFn: () => getJobsByCompany(recruiter!.companyId),
+    enabled: recruiter != undefined
+  });
+
   return (
     <Flex direction="column" gap="4">
       <Heading>Dashboard</Heading>
@@ -42,19 +50,12 @@ export function Dashboard() {
             <Heading>Carousel - posts</Heading>
           </Flex>
           <Heading as="h3">
-            Acompanhe aqui as últimas vagas de sua empresa!
+            {role === Role.RECRUITER && "Acompanhe aqui as últimas vagas de sua empresa!"}
+            {role === Role.CANDIDATE && "Acompanhe aqui as suas aplicações!"}
           </Heading>
           <Wrap direction="row" spacing="4">
-            <JobCard />
-            <JobCard />
-            <JobCard />
-            <JobCard />
-            <JobCard />
-            <JobCard />
-            <JobCard />
-            <JobCard />
-            <JobCard />
-            <JobCard />
+            {role === Role.RECRUITER && (<>{console.log("jobs", jobs)}{jobs?.map(job => <JobCard key={job.id} job={job}/>)}</>)}
+            {role === Role.CANDIDATE && <></>}
           </Wrap>
           <Flex justifyContent="center">
             <LinkOverlay

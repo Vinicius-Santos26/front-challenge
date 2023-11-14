@@ -1,9 +1,7 @@
 import {
-  Badge,
   Button,
   Card,
   CardBody,
-  CardFooter,
   CardHeader,
   Flex,
   HStack,
@@ -15,8 +13,24 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { FaEdit, FaTrash } from 'react-icons/fa';
+import { InactiveUser, getUsers } from '../../services/users';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 
 export function Users() {
+  const queryClient = useQueryClient();
+  const { data: users } = useQuery({
+    queryKey: ['users'],
+    queryFn: () => getUsers(),
+  });
+
+
+  const inactiveUser = useMutation({
+    mutationFn: (userId:string) => InactiveUser(userId),
+    onSuccess() {
+      queryClient.invalidateQueries("users");
+    },
+  })
+
   return (
     <Flex direction="column" gap="4">
       <Heading>Usuários</Heading>
@@ -24,15 +38,15 @@ export function Users() {
         <Button colorScheme='brand'>Adicionar usúarios</Button>
       </Flex>
       <VStack width="full">
-        <LinkBox width="full">
-          <Card padding="4" display="flex"  flexDirection='row'  justifyContent="space-between" width="full">
+        {users?.map(user => (<LinkBox width="full">
+          <Card padding="4" display="flex" flexDirection='row' justifyContent="space-between" width="full">
             <Flex flexDirection="column" gap="1">
               <CardHeader padding="0" display="flex" gap="4">
                 <LinkOverlay href="#">
-                  <Heading fontSize="md">Henrique Alves da Silva</Heading>
-                  
+                  <Heading fontSize="md">{user.email} </Heading>
+
                 </LinkOverlay>
-                <Badge colorScheme='green'>ADMINISTRATOR</Badge>
+
               </CardHeader>
               <CardBody
                 display="flex"
@@ -41,8 +55,8 @@ export function Users() {
                 padding="0"
                 justifyContent="space-between"
               >
-                <Text fontSize="sm">email@email.com.br</Text>
-              </CardBody>     
+                <Text fontSize="sm">{user.role} </Text>
+              </CardBody>
             </Flex>
 
             <HStack spacing="8">
@@ -57,10 +71,12 @@ export function Users() {
                 aria-label="inactive"
                 size="md"
                 icon={<FaTrash />}
+                onClick={() => inactiveUser.mutate(user.id)}
               />
             </HStack>
           </Card>
-        </LinkBox>
+        </LinkBox>))}
+
       </VStack>
     </Flex>
   );
