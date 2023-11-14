@@ -16,8 +16,11 @@ export function Componentes() {
         <CardFooter>
           <Box>
             <FaClock />
-            <Text>Texto</Text>
+            <Text>Texto2</Text>
           </Box>
+          <Text>
+            Teste
+          </Text>
         </CardFooter>
       </Card>
     </Flex>
