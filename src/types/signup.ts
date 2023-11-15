@@ -4,5 +4,6 @@ export type SignupDto  = {
     birthDate: Date;
     email: string;
     password: string;
+    vulnerabilities: string[];
   }
   

@@ -7,11 +7,14 @@ import { Recruiter } from '../types/recruiter';
 import { User } from '../types/user';
 import { getRecruiterByUserId } from '../services/recruiters';
 import { SignupDto } from '../types/signup';
+import { Candidate } from '../types/candidate';
+import { getCandidateByUserId } from '../services/candidates';
 
 type AuthContextData  = {
   user: User | null,
   role: Role | null,
   recruiter: Recruiter | null,
+  candidate: Candidate | null,
   onLogin(signin: SigninDto): Promise<void>,
   onSignUp(signupu: SignupDto): Promise<void>,
   onLogout(): void
@@ -30,6 +33,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [role, setRole] = useState<Role | null>(null);
   const [user, setUser] = useState<User| null>(null);
   const [recruiter, setRecruiter] = useState<Recruiter| null>(null);
+  const [candidate, setCandidate] = useState<Candidate| null>(null);
 
   const handleLogin = async (signin: SigninDto) => {
     const {accessToken, user} = await signIn(signin);
@@ -42,6 +46,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     if(user.role === Role.RECRUITER){
       const recruiter = await getRecruiterByUserId(user.id);
       setRecruiter(recruiter);
+    } else if( user.role === Role.CANDIDATE){
+      const candidate = await getCandidateByUserId(user.id);
+      setCandidate(candidate);
     }
 
     const origin = location.state?.from?.pathname || '/dashboard';
@@ -59,6 +66,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     if(user.role === Role.RECRUITER){
       const recruiter = await getRecruiterByUserId(user.id);
       setRecruiter(recruiter);
+    }else if( user.role === Role.CANDIDATE){
+      const candidate = await getCandidateByUserId(user.id);
+      setCandidate(candidate);
     }
 
     const origin = location.state?.from?.pathname || '/dashboard';
@@ -73,6 +83,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     user,
     role,
     recruiter,
+    candidate,
     onLogin: handleLogin,
     onLogout: handleLogout,
     onSignUp: handleSignUp

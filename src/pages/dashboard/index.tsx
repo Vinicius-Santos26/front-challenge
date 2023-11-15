@@ -1,18 +1,24 @@
-import { Flex, Heading, LinkBox, LinkOverlay, Wrap } from '@chakra-ui/react';
-import { Link } from 'react-router-dom';
-import { useAuth } from '../../hooks/useAuth';
-import { Role } from '../../types/role';
-import { JobCard } from '../../components/JobCard';
-import { useQuery } from 'react-query';
-import { getJobsByCompany } from '../../services/jobs';
+import { Flex, Heading, LinkBox, LinkOverlay, Link as ChakraLink, Wrap } from "@chakra-ui/react";
+import { Link } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
+import { Role } from "../../types/role";
+import { JobCard } from "../../components/JobCard";
+import { useQuery } from "react-query";
+import { getJobsByCandidate, getJobsByCompany } from "../../services/jobs";
 
 export function Dashboard() {
-  const { role, recruiter } = useAuth();
+  const { role, recruiter, candidate } = useAuth();
 
-  const { data: jobs } = useQuery({
-    queryKey: ['jobs'],
+  const { data: jobsCompany } = useQuery({
+    queryKey: ["jobsCompany"],
     queryFn: () => getJobsByCompany(recruiter!.companyId),
-    enabled: recruiter != undefined
+    enabled: recruiter != undefined,
+  });
+
+  const { data: jobsCandidate } = useQuery({
+    queryKey: ["jobsCandidate"],
+    queryFn: () => getJobsByCandidate(candidate!.id),
+    enabled: candidate != undefined,
   });
 
   return (
@@ -38,34 +44,72 @@ export function Dashboard() {
         </Flex>
       )}
 
-      {role !== Role.ADMINISTRATOR && (
+      {role === Role.RECRUITER && (
         <>
-          <Flex
-            height={{ base: '30vh' }}
-            minWidth="full"
-            justifyContent="center"
-            alignItems="center"
-            backgroundColor="gray.300"
-          >
-            <Heading>Carousel - posts</Heading>
-          </Flex>
           <Heading as="h3">
-            {role === Role.RECRUITER && "Acompanhe aqui as últimas vagas de sua empresa!"}
-            {role === Role.CANDIDATE && "Acompanhe aqui as suas aplicações!"}
+            Acompanhe aqui as últimas vagas de sua empresa!
           </Heading>
           <Wrap direction="row" spacing="4">
-            {role === Role.RECRUITER && (<>{console.log("jobs", jobs)}{jobs?.map(job => <JobCard key={job.id} job={job}/>)}</>)}
-            {role === Role.CANDIDATE && <></>}
+            {role === Role.RECRUITER && (
+              <>
+                {jobsCompany?.map((job) => (
+                  <JobCard key={job.id} job={job} />
+                ))}
+              </>
+            )}
           </Wrap>
           <Flex justifyContent="center">
-            <LinkOverlay
+            <ChakraLink
               as={Link}
               to="/dashboard/jobs"
               color="brand.500"
               fontWeight="bold"
             >
               VER TODAS AS VAGAS
-            </LinkOverlay>
+            </ChakraLink>
+          </Flex>
+        </>
+      )}
+
+      {role === Role.CANDIDATE && (
+        <>
+          <Flex flexDirection="column" gap="2">
+            <Heading as="h3">Vagas</Heading>
+            <Wrap direction="row" spacing="4" flex="1">
+              {jobsCandidate?.slice(0, 3).map((job) => (
+                <JobCard key={job.id} job={job} />
+              ))}
+            </Wrap>
+            <Flex justifyContent="center">
+              <ChakraLink
+                as={Link}
+                to="/dashboard/jobs"
+                color="brand.500"
+                fontWeight="bold"
+              >
+                VER TODAS AS VAGAS
+              </ChakraLink>
+            </Flex>
+          </Flex>
+          <Flex flexDirection="column" gap="2">
+            <Heading as="h3">Aplicações</Heading>
+            <Wrap direction="row" spacing="4" flex="1">
+              {jobsCandidate?.slice(0, 3).map((job) => (
+                <JobCard key={job.id} job={job} />
+              ))}
+            </Wrap>
+            <Flex justifyContent="center">
+              <LinkBox>
+                <ChakraLink
+                  as={Link}
+                  to="/dashboard/jobs"
+                  color="brand.500"
+                  fontWeight="bold"
+                >
+                  VER TODAS AS APLICAÇÕES
+                </ChakraLink>
+              </LinkBox>
+            </Flex>
           </Flex>
         </>
       )}

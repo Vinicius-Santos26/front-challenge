@@ -10,9 +10,10 @@ import {
   LinkBox,
   LinkOverlay,
   Text,
-} from '@chakra-ui/react';
-import { IoLocationSharp, IoPeopleSharp } from 'react-icons/io5';
-import { Job } from '../../types/job';
+} from "@chakra-ui/react";
+import { IoLocationSharp, IoPeopleSharp } from "react-icons/io5";
+import { Job } from "../../types/job";
+import { Link } from "react-router-dom";
 
 type JobCardProps = {
   job: Job;
@@ -30,16 +31,20 @@ export function JobCard(props: JobCardProps) {
         gap="2"
       >
         <CardHeader padding="0">
-          <LinkOverlay href="#">
+          <LinkOverlay as={Link} to={`/dashboard/jobs/${job.id}`}>
             <Heading size="md">
               {job.position.name}
               <HStack spacing="4">
                 {job.jobSocialVulnerabilities.map((v) => (
-                  <Badge key={v.name} colorScheme={v.color}>{v.name} </Badge>
+                  <Badge key={v.name} colorScheme={v.color}>
+                    {v.name}{" "}
+                  </Badge>
                 ))}
               </HStack>
             </Heading>
-            <Text>{job.jobLevel.name}  -  {job.quantity} vaga</Text>
+            <Text>
+              {job.jobLevel.name} - {job.quantity} vaga
+            </Text>
           </LinkOverlay>
         </CardHeader>
         <CardBody display="flex" gap="2" alignItems="center" padding="0">
@@ -53,8 +58,11 @@ export function JobCard(props: JobCardProps) {
           <Box color="brand.500">
             <IoLocationSharp size={24} />
           </Box>
-          <Text> {job.addressStreet}, {job.addressNumber} - {job.addressCity},{' '}
-            {job.state.name}</Text>
+          <Text>
+            {" "}
+            {job.addressStreet}, {job.addressNumber} - {job.addressCity},{" "}
+            {job.state.name}
+          </Text>
         </CardFooter>
       </Card>
     </LinkBox>

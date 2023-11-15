@@ -6,20 +6,33 @@ import {
   FormLabel,
   Heading,
   Input,
+  Spinner,
   Text,
   useToast,
 } from '@chakra-ui/react';
+import { Select as MultiSelect } from 'chakra-react-select';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, Controller } from 'react-hook-form';
 import { z } from 'zod';
 import { useAuth } from '../../hooks/useAuth';
 import { SingleDatepicker } from 'chakra-dayzed-datepicker';
 import { SignupDto } from '../../types/signup';
+import { getSocialVulnerabilities } from '../../services/socialVulnerabilities';
+import { useQuery } from 'react-query';
 
 const validationSchema = z.object({
   firstName: z.string(),
   lastName: z.string(),
   birthDate: z.date(),
+  vulnerabilities: z
+    .array(
+      z.object({
+        value: z.string(),
+        label: z.string(),
+        colorScheme: z.string(),
+      })
+    )
+    .min(1, { message: 'Campo obrigatório' }),
   email: z.string().min(1, { message: 'Email é obrigatório' }).email({
     message: 'Email precisa ser válido',
   }),
@@ -37,6 +50,12 @@ type ValidationSchema = z.infer<typeof validationSchema>;
 
 export function Signup() {
   const { onSignUp } = useAuth();
+
+  const { data: socialVulnerabilities, isLoading } = useQuery({
+    queryKey: ['socialVulnerabilities'],
+    queryFn: () => getSocialVulnerabilities(),
+  });
+
   const toast = useToast();
 
   const {
@@ -51,8 +70,7 @@ export function Signup() {
 
   async function handleSubmitNovaVaga(formData: ValidationSchema) {
     try {
-      console.log("oi")
-      const data: SignupDto= {firstName: formData.firstName, lastName: formData.lastName, email: formData.email, birthDate: formData.birthDate, password: formData.password}
+      const data: SignupDto = { firstName: formData.firstName, lastName: formData.lastName, email: formData.email, birthDate: formData.birthDate, password: formData.password, vulnerabilities: formData.vulnerabilities.map(v => v.value) }
       await onSignUp(data);
     } catch (error) {
       toast({
@@ -82,12 +100,13 @@ export function Signup() {
         textAlign="center"
         gap="4"
         rounded="md"
+        width="container.sm"
       >
         <Heading fontWeight="normal" fontSize="3xl">
           Crie seu perfil gratuitamente
         </Heading>
         <Text>Conquiste o seu próximo emprego agora!</Text>
-        <form onSubmit={handleSubmit(handleSubmitNovaVaga)} noValidate>
+        {isLoading ? (<Spinner size="xl" />) : (<form onSubmit={handleSubmit(handleSubmitNovaVaga)} noValidate>
           <Flex flexDirection="column" gap="4">
             <FormControl isInvalid={errors.firstName !== undefined}>
               <FormLabel>Nome</FormLabel>
@@ -128,6 +147,34 @@ export function Signup() {
               />
               <FormErrorMessage>{errors.email?.message}</FormErrorMessage>
             </FormControl>
+            <FormControl
+              width="auto"
+              isInvalid={errors.vulnerabilities !== undefined}
+            >
+              <FormLabel>Vulnerabilidades</FormLabel>
+              <Controller
+                control={control}
+                name="vulnerabilities"
+                render={({ field }) => (
+                  <MultiSelect
+                    isMulti
+                    options={socialVulnerabilities!.map((social) => ({
+                      label: social.name,
+                      value: social.id,
+                      colorScheme: social.color,
+                    }))}
+                    placeholder="Selecione"
+                    value={field.value}
+                    onChange={field.onChange}
+                    ref={(elm) => field.ref(elm)}
+                  />
+                )}
+              />
+
+              <FormErrorMessage>
+                {errors.vulnerabilities?.message}
+              </FormErrorMessage>
+            </FormControl>
             <FormControl isInvalid={errors.email !== undefined}>
               <FormLabel>Email</FormLabel>
               <Input type="email" {...register('email')} />
@@ -152,8 +199,10 @@ export function Signup() {
               Entrar
             </Button>
           </Flex>
-        </form>
-      </Flex>
-    </Flex>
+        </form >)
+        }
+
+      </Flex >
+    </Flex >
   );
 }

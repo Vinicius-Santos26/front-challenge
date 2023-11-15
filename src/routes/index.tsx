@@ -16,13 +16,12 @@ import {
 } from '../pages';
 import { Layout } from '../components/Layout';
 import { ProtectedRoute } from './protectedRoute';
-import { Componentes } from '../pages/componentes';
+import { JobDetail } from '../pages/jobDetail';
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Layout />}>
       <Route index element={<Home />} />
-      <Route path="/componentes" element={<Componentes />} />
       <Route path="/signin" element={<Signin />} />
       <Route path="/signup" element={<Signup />} />
       <Route
@@ -96,6 +95,20 @@ export const router = createBrowserRouter(
             handle={{
               crumb: (pathName: string) => ({
                 text: 'Nova vaga',
+                to: pathName,
+              }),
+            }}
+          />
+           <Route
+            path="/dashboard/jobs/:jobId"
+            element={
+              <ProtectedRoute>
+                <JobDetail />
+              </ProtectedRoute>
+            }
+            handle={{
+              crumb: (pathName: string) => ({
+                text: 'Detalhe da vaga',
                 to: pathName,
               }),
             }}
