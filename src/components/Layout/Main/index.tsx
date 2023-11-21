@@ -12,7 +12,6 @@ export function Main() {
   const location = useLocation();
   const matches = useMatches();
 
-  console.log(matches)
   const crumbs = matches
     .filter((match) => Boolean(match.handle?.crumb))
     .map((match) => match.handle.crumb(match.pathname));

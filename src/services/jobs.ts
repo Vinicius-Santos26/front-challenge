@@ -9,7 +9,7 @@ export async function createJob(newJob: NewJobDto) {
 }
 
 export async function getJobsByCompany(companyId: string): Promise<Job[]> {
-  const { data } = await api.get(`/jobs/${companyId}`);
+  const { data } = await api.get("jobs", { params: { companyId } });
 
   return data;
 }
@@ -25,3 +25,10 @@ export async function getJobs(): Promise<Job[]> {
 
   return data;
 }
+
+export async function getJobById(jobId: string): Promise<Job> {
+  const { data } = await api.get(`/jobs/${jobId}`);
+
+  return data;
+}
+
