@@ -7,3 +7,11 @@ export type RecruitmentFlow = {
   description: string;
   recruitmentFlowSteps: RecruitmentFlowStep[];
 }
+
+
+export type CreateRecruitmentFlowDto = {
+  companyId: string;
+  name: string;
+  description: string;
+  recruitmentFlowSteps: string[]
+}

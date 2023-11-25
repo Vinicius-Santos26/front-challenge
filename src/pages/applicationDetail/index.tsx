@@ -96,10 +96,10 @@ export function ApplicationDetail() {
           <Divider marginY="6" />
 
           <Stepper
-            size="lg"
+            size="md"
             index={Number(application!.recruitmentFlowStep.order) - 1}
             orientation="vertical"
-            height="400px"
+            height="600px"
             gap={4}
           >
             {application!.job.recruitmentFlow.recruitmentFlowSteps.map(

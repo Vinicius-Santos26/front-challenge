@@ -19,6 +19,7 @@ import { ProtectedRoute } from './protectedRoute';
 import { JobDetail } from '../pages/jobDetail';
 import { Applications } from '../pages/applications';
 import { ApplicationDetail } from '../pages/applicationDetail';
+import { RecruitmentFlows } from '../pages/recruitmentFlows';
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -146,6 +147,17 @@ export const router = createBrowserRouter(
             }}
           />
         </Route>
+        <Route
+          path="/dashboard/recruitment-flows"
+          element={
+            <ProtectedRoute>
+              <RecruitmentFlows />
+            </ProtectedRoute>
+          }
+          handle={{
+            crumb: (pathName: string) => ({ text: 'Fluxos de Recrutamento', to: pathName }),
+          }}
+        />
       </Route>
     </Route>
   )

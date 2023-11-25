@@ -12,6 +12,7 @@ import {
   Grid,
   GridItem,
   Heading,
+  Spinner,
   Stack,
   VStack,
 } from "@chakra-ui/react";
@@ -25,13 +26,21 @@ import { Role } from "../../types/role";
 export function Jobs() {
   const { recruiter, candidate, role } = useAuth();
 
-  const { data: jobs } = useQuery({
+  const {
+    data: jobs,
+    isLoading: isLoadingJobsCompany,
+    isFetching: isFetchingJobsCompany,
+  } = useQuery({
     queryKey: ["jobs"],
     queryFn: () => getJobsByCompany(recruiter!.companyId),
     enabled: recruiter != undefined,
   });
 
-  const { data: jobsCandidate } = useQuery({
+  const {
+    data: jobsCandidate,
+    isLoading: isLoadingJobsCandidate,
+    isFetching: isFetchingJobsCandidate,
+  } = useQuery({
     queryKey: ["jobsCandidate"],
     queryFn: () => getJobsByCandidate(candidate!.id),
     enabled: candidate != undefined,
@@ -141,20 +150,27 @@ export function Jobs() {
         </Flex>
 
         <VStack spacing={4} align="stretch">
-          {role === Role.RECRUITER && (
-            <>
-              {jobs?.map((job) => (
-                <JobItem key={job.id} job={job} />
-              ))}
-            </>
-          )}
-          {role === Role.CANDIDATE && (
-            <>
-              {jobsCandidate?.map((job) => (
-                <JobItem key={job.id} job={job} />
-              ))}
-            </>
-          )}
+          {role === Role.RECRUITER &&
+            (isLoadingJobsCompany || isFetchingJobsCompany ? (
+              <Spinner size="lg" />
+            ) : (
+              <>
+                {jobs?.map((job) => (
+                  <JobItem key={job.id} job={job} />
+                ))}
+              </>
+            ))}
+
+          {role === Role.CANDIDATE &&
+            (isLoadingJobsCandidate || isFetchingJobsCandidate ? (
+              <Spinner size="lg" />
+            ) : (
+              <>
+                {jobsCandidate?.map((job) => (
+                  <JobItem key={job.id} job={job} />
+                ))}
+              </>
+            ))}
         </VStack>
       </GridItem>
     </Grid>

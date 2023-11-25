@@ -22,13 +22,21 @@ import { getApplicationsByCandidate } from "../../services/application";
 export function Dashboard() {
   const { role, recruiter, candidate } = useAuth();
 
-  const { data: jobsCompany } = useQuery({
+  const {
+    data: jobsCompany,
+    isLoading: isLoadingJobsCompany,
+    isFetching: isFetchingJobsCompany,
+  } = useQuery({
     queryKey: ["jobsCompany"],
     queryFn: () => getJobsByCompany(recruiter!.companyId),
     enabled: recruiter != undefined,
   });
 
-  const { data: jobsCandidate } = useQuery({
+  const {
+    data: jobsCandidate,
+    isLoading: isLoadingJobsCandidate,
+    isFetching: isFetchingJobsCandidate,
+  } = useQuery({
     queryKey: ["jobsCandidate"],
     queryFn: () => getJobsByCandidate(candidate!.id),
     enabled: candidate != undefined,
@@ -36,8 +44,8 @@ export function Dashboard() {
 
   const {
     data: applicationsCandidate,
-    isLoading,
-    isFetching,
+    isLoading: isLoadingApplicationsCandidate,
+    isFetching: isFetchingApplicationsCandidate,
   } = useQuery({
     queryKey: ["applicationsCandidate"],
     queryFn: () => getApplicationsByCandidate(candidate!.id),
@@ -69,11 +77,48 @@ export function Dashboard() {
 
       {role === Role.RECRUITER && (
         <>
+          <Flex gap="8" justifyContent="center" alignItems="center">
+            <LinkBox
+              as="article"
+              maxW="sm"
+              p="8"
+              borderWidth="1px"
+              rounded="md"
+            >
+              <LinkOverlay as={Link} to="/dashboard/recruitment-flows">
+                Gerenciar fluxos de recrutamento
+              </LinkOverlay>
+            </LinkBox>
+            <LinkBox
+              as="article"
+              maxW="sm"
+              p="8"
+              borderWidth="1px"
+              rounded="md"
+            >
+              <LinkOverlay as={Link} to="/dashboard/positions">
+                Gerenciar cargos
+              </LinkOverlay>
+            </LinkBox>
+            <LinkBox
+              as="article"
+              maxW="sm"
+              p="8"
+              borderWidth="1px"
+              rounded="md"
+            >
+              <LinkOverlay as={Link} to="/dashboard/jobs/new">
+                Nova vaga
+              </LinkOverlay>
+            </LinkBox>
+          </Flex>
           <Heading as="h3">
             Acompanhe aqui as últimas vagas de sua empresa!
           </Heading>
           <Wrap direction="row" spacing="4">
-            {role === Role.RECRUITER && (
+            {isLoadingJobsCompany || isFetchingJobsCompany ? (
+              <Spinner size="md" />
+            ) : (
               <>
                 {jobsCompany?.map((job) => (
                   <JobCard key={job.id} job={job} />
@@ -99,7 +144,7 @@ export function Dashboard() {
           <Flex flexDirection="column" gap="2">
             <Heading as="h3">Vagas</Heading>
             <Wrap direction="row" spacing="4" flex="1">
-              {isLoading || isFetching ? (
+              {isLoadingJobsCandidate || isFetchingJobsCandidate ? (
                 <Spinner size="md" />
               ) : (
                 <>
@@ -123,7 +168,8 @@ export function Dashboard() {
           <Flex flexDirection="column" gap="2">
             <Heading as="h3">Aplicações</Heading>
             <Wrap direction="row" spacing="4" flex="1">
-              {isLoading || isFetching ? (
+              {isLoadingApplicationsCandidate ||
+              isFetchingApplicationsCandidate ? (
                 <Spinner size="md" />
               ) : (
                 <>
