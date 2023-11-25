@@ -12,6 +12,7 @@ import {
 } from '@chakra-ui/react';
 import { Job } from '../../types/job';
 import { format, parseISO } from 'date-fns';
+import { Link } from 'react-router-dom';
 
 type JobItemProps = {
   job: Job;
@@ -24,7 +25,7 @@ export function JobItem(props: JobItemProps) {
       <Card fontWeight="normal" padding="2">
         <CardHeader padding="0">
           <Heading size="sm">
-            <LinkOverlay href="#" display='flex' gap='4' alignItems='center'>
+            <LinkOverlay  as={Link} to={`/dashboard/jobs/${job.id}`} display='flex' gap='4' alignItems='center'>
               {job.position.name} | {job.jobLevel.name} - {job.quantity} vaga{' '}
               <HStack spacing="4">
                 {job.jobSocialVulnerabilities.map((v) => (

@@ -36,11 +36,13 @@ export function JobDetail() {
   async function handleCandidatarClick(){
     try {
       const data: CreateApplicationDto = {candidateId: candidate!.id , jobId: jobId!}
-      await createApplication(data);
+      const application = await createApplication(data);
+
+      navigate(`/dashboard/applications/${application.id}`)
     } catch (error) {
       toast({
         position: 'top-right',
-        title: `Erro ao cadastrar`,
+        title: `Erro ao aplicar na vaga`,
         status: 'error',
         isClosable: true,
       });

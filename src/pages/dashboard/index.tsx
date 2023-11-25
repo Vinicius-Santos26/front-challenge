@@ -1,10 +1,23 @@
-import { Flex, Heading, LinkBox, LinkOverlay, Link as ChakraLink, Wrap } from "@chakra-ui/react";
+import {
+  Flex,
+  Heading,
+  LinkBox,
+  LinkOverlay,
+  Link as ChakraLink,
+  Wrap,
+  Card,
+  CardHeader,
+  CardFooter,
+  Text,
+  Spinner,
+} from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import { Role } from "../../types/role";
 import { JobCard } from "../../components/JobCard";
 import { useQuery } from "react-query";
 import { getJobsByCandidate, getJobsByCompany } from "../../services/jobs";
+import { getApplicationsByCandidate } from "../../services/application";
 
 export function Dashboard() {
   const { role, recruiter, candidate } = useAuth();
@@ -18,6 +31,16 @@ export function Dashboard() {
   const { data: jobsCandidate } = useQuery({
     queryKey: ["jobsCandidate"],
     queryFn: () => getJobsByCandidate(candidate!.id),
+    enabled: candidate != undefined,
+  });
+
+  const {
+    data: applicationsCandidate,
+    isLoading,
+    isFetching,
+  } = useQuery({
+    queryKey: ["applicationsCandidate"],
+    queryFn: () => getApplicationsByCandidate(candidate!.id),
     enabled: candidate != undefined,
   });
 
@@ -76,9 +99,15 @@ export function Dashboard() {
           <Flex flexDirection="column" gap="2">
             <Heading as="h3">Vagas</Heading>
             <Wrap direction="row" spacing="4" flex="1">
-              {jobsCandidate?.slice(0, 3).map((job) => (
-                <JobCard key={job.id} job={job} />
-              ))}
+              {isLoading || isFetching ? (
+                <Spinner size="md" />
+              ) : (
+                <>
+                  {jobsCandidate?.slice(0, 3).map((job) => (
+                    <JobCard key={job.id} job={job} />
+                  ))}
+                </>
+              )}
             </Wrap>
             <Flex justifyContent="center">
               <ChakraLink
@@ -94,15 +123,64 @@ export function Dashboard() {
           <Flex flexDirection="column" gap="2">
             <Heading as="h3">Aplicações</Heading>
             <Wrap direction="row" spacing="4" flex="1">
-              {jobsCandidate?.slice(0, 3).map((job) => (
-                <JobCard key={job.id} job={job} />
-              ))}
+              {isLoading || isFetching ? (
+                <Spinner size="md" />
+              ) : (
+                <>
+                  {applicationsCandidate?.slice(0, 3).map((application) => (
+                    <LinkBox key={application.id}>
+                      <Card
+                        maxWidth="sm"
+                        padding="4"
+                        display="flex"
+                        flexDirection="column"
+                        gap="2"
+                      >
+                        <CardHeader padding="0">
+                          <LinkOverlay
+                            as={Link}
+                            to={`/dashboard/applications/${application.id}`}
+                          >
+                            <Heading size="md">
+                              {application.job.position.name}
+                            </Heading>
+                            <Text>
+                              {application.job.jobLevel.name} -{" "}
+                              {application.job.company.name}
+                            </Text>
+                          </LinkOverlay>
+                        </CardHeader>
+                        <CardFooter
+                          flexDirection="column"
+                          display="flex"
+                          gap="2"
+                          padding="0"
+                        >
+                          <Text>
+                            Etapa atual: {application.recruitmentFlowStep.name}
+                          </Text>
+                          <Text display="inline-flex" gap="2">
+                            Status:
+                            <Text
+                              color={application.reprovedAt ? "red" : "blue"}
+                            >
+                              {application.reprovedAt
+                                ? "Reprovado"
+                                : "Em andamento"}
+                            </Text>
+                          </Text>
+                        </CardFooter>
+                      </Card>
+                    </LinkBox>
+                  ))}
+                </>
+              )}
             </Wrap>
             <Flex justifyContent="center">
               <LinkBox>
                 <ChakraLink
                   as={Link}
-                  to="/dashboard/jobs"
+                  to="/dashboard/applications"
                   color="brand.500"
                   fontWeight="bold"
                 >

@@ -1,6 +1,7 @@
-import { Comapany } from "./company";
+import { Company } from "./company";
 import { JobLevel } from "./jobLevel";
 import { Position } from "./position";
+import { RecruitmentFlow } from "./recruitmentFlow";
 import { SocialVulnerability } from "./socialVulnerability";
 import { State } from "./state";
 import { WorkModel } from "./workModel";
@@ -20,6 +21,7 @@ export type Job = {
   description: string;
   responsabilities: string;
   requirements: string;
-  company: Comapany;
+  company: Company;
   workModel: WorkModel;
+  recruitmentFlow: RecruitmentFlow;
 }

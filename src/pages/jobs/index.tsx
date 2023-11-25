@@ -14,31 +14,39 @@ import {
   Heading,
   Stack,
   VStack,
-} from '@chakra-ui/react';
-import { JobItem } from '../../components/JobItem';
-import { Link } from 'react-router-dom';
-import { useQuery } from 'react-query';
-import { getJobsByCompany } from '../../services/jobs';
-import { useAuth } from '../../hooks/useAuth';
+} from "@chakra-ui/react";
+import { JobItem } from "../../components/JobItem";
+import { Link } from "react-router-dom";
+import { useQuery } from "react-query";
+import { getJobsByCandidate, getJobsByCompany } from "../../services/jobs";
+import { useAuth } from "../../hooks/useAuth";
+import { Role } from "../../types/role";
 
 export function Jobs() {
-  const { recruiter } = useAuth();
+  const { recruiter, candidate, role } = useAuth();
 
   const { data: jobs } = useQuery({
-    queryKey: ['jobs'],
+    queryKey: ["jobs"],
     queryFn: () => getJobsByCompany(recruiter!.companyId),
+    enabled: recruiter != undefined,
+  });
+
+  const { data: jobsCandidate } = useQuery({
+    queryKey: ["jobsCandidate"],
+    queryFn: () => getJobsByCandidate(candidate!.id),
+    enabled: candidate != undefined,
   });
 
   return (
     <Grid
       templateAreas={`"filters vagas"`}
-      gridTemplateColumns={'250px 1fr'}
+      gridTemplateColumns={"250px 1fr"}
       minH="full"
       gap="4"
       color="blackAlpha.700"
       fontWeight="bold"
     >
-      <GridItem area={'filters'} boxShadow="">
+      <GridItem area={"filters"} boxShadow="">
         <Flex justifyContent="space-between" mb="4" mt="12">
           <Heading size="md">Filtros</Heading>
           <Button colorScheme="brand" variant="link">
@@ -117,22 +125,36 @@ export function Jobs() {
           </AccordionItem>
         </Accordion>
       </GridItem>
-      <GridItem area={'vagas'}>
+      <GridItem area={"vagas"}>
         <Flex justifyContent="space-between">
           <Heading marginBottom="4">Vagas</Heading>
-          <Button
-            as={Link}
-            to="/dashboard/jobs/new"
-            bgColor="brand.500"
-            color="white"
-          >
-            Nova vaga
-          </Button>
+          {role === Role.RECRUITER && (
+            <Button
+              as={Link}
+              to="/dashboard/jobs/new"
+              bgColor="brand.500"
+              color="white"
+            >
+              Nova vaga
+            </Button>
+          )}
         </Flex>
 
         <VStack spacing={4} align="stretch">
-          {jobs?.map((job) => <JobItem  key={job.id} job={job}/>)}
-        
+          {role === Role.RECRUITER && (
+            <>
+              {jobs?.map((job) => (
+                <JobItem key={job.id} job={job} />
+              ))}
+            </>
+          )}
+          {role === Role.CANDIDATE && (
+            <>
+              {jobsCandidate?.map((job) => (
+                <JobItem key={job.id} job={job} />
+              ))}
+            </>
+          )}
         </VStack>
       </GridItem>
     </Grid>

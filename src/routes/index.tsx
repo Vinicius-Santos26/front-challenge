@@ -17,6 +17,8 @@ import {
 import { Layout } from '../components/Layout';
 import { ProtectedRoute } from './protectedRoute';
 import { JobDetail } from '../pages/jobDetail';
+import { Applications } from '../pages/applications';
+import { ApplicationDetail } from '../pages/applicationDetail';
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -109,6 +111,36 @@ export const router = createBrowserRouter(
             handle={{
               crumb: (pathName: string) => ({
                 text: 'Detalhe da vaga',
+                to: pathName,
+              }),
+            }}
+          />
+        </Route>
+        <Route
+          path="/dashboard/applications"
+          handle={{
+            crumb: (pathName: string) => ({ text: 'Aplicações', to: pathName }),
+          }}
+        >
+          <Route
+            index
+            element={
+              <ProtectedRoute>
+                <Applications />
+              </ProtectedRoute>
+            }
+          />
+          
+           <Route
+            path="/dashboard/applications/:applicationId"
+            element={
+              <ProtectedRoute>
+                <ApplicationDetail />
+              </ProtectedRoute>
+            }
+            handle={{
+              crumb: (pathName: string) => ({
+                text: 'Detalhe da aplicação',
                 to: pathName,
               }),
             }}
