@@ -121,7 +121,7 @@ export function Dashboard() {
             ) : (
               <>
                 {jobsCompany?.map((job) => (
-                  <JobCard key={job.id} job={job} />
+                  <JobCard key={job.id} job={job} role={role} />
                 ))}
               </>
             )}
@@ -149,7 +149,7 @@ export function Dashboard() {
               ) : (
                 <>
                   {jobsCandidate?.slice(0, 3).map((job) => (
-                    <JobCard key={job.id} job={job} />
+                    <JobCard key={job.id} job={job} role={role} />
                   ))}
                 </>
               )}

@@ -14,13 +14,15 @@ import {
 import { IoLocationSharp, IoPeopleSharp } from "react-icons/io5";
 import { Job } from "../../types/job";
 import { Link } from "react-router-dom";
+import { Role } from "../../types/role";
 
 type JobCardProps = {
   job: Job;
+  role: Role;
 };
 
 export function JobCard(props: JobCardProps) {
-  const { job } = props;
+  const { job, role } = props;
   return (
     <LinkBox>
       <Card
@@ -31,7 +33,7 @@ export function JobCard(props: JobCardProps) {
         gap="2"
       >
         <CardHeader padding="0">
-          <LinkOverlay as={Link} to={`/dashboard/jobs/${job.id}`}>
+          <LinkOverlay as={Link} to={role === Role.CANDIDATE ? `/dashboard/jobs/${job.id}`: `/dashboard/jobs/recruitment/${job.id}`}>
             <Heading size="md">
               {job.position.name}
               <HStack spacing="4">

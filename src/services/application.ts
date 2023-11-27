@@ -1,4 +1,4 @@
-import { Application, CreateApplicationDto } from "../types/application";
+import { Application, CreateApplicationDto, UpdateApplicationDto } from "../types/application";
 import api from "./api";
 
 
@@ -16,5 +16,18 @@ export async function getApplicationsByCandidate(candidateId: string): Promise<A
 export async function getApplicationById(applicationId: string): Promise<Application> {
     const { data } = await api.get(`applications/${applicationId}`);
   
+    return data;
+}
+
+export async function getApplicationsByJob(jobId: string): Promise<Application[]>{
+    const { data } = await api.get("applications", { params: { jobId } });
+
+    return data;
+}
+
+
+export async function updateApplication(updateApplication: UpdateApplicationDto, applicationId: string) {
+    const { data } = await api.patch(`applications/${applicationId}`, updateApplication);
+
     return data;
 }

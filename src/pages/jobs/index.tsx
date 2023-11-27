@@ -156,7 +156,7 @@ export function Jobs() {
             ) : (
               <>
                 {jobs?.map((job) => (
-                  <JobItem key={job.id} job={job} />
+                  <JobItem key={job.id} job={job} role={role} />
                 ))}
               </>
             ))}
@@ -167,7 +167,7 @@ export function Jobs() {
             ) : (
               <>
                 {jobsCandidate?.map((job) => (
-                  <JobItem key={job.id} job={job} />
+                  <JobItem key={job.id} job={job} role={role} />
                 ))}
               </>
             ))}

@@ -20,6 +20,7 @@ import { JobDetail } from '../pages/jobDetail';
 import { Applications } from '../pages/applications';
 import { ApplicationDetail } from '../pages/applicationDetail';
 import { RecruitmentFlows } from '../pages/recruitmentFlows';
+import { JobRecruitment } from '../pages/jobRecruitment';
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -112,6 +113,20 @@ export const router = createBrowserRouter(
             handle={{
               crumb: (pathName: string) => ({
                 text: 'Detalhe da vaga',
+                to: pathName,
+              }),
+            }}
+          />
+          <Route
+            path="/dashboard/jobs/recruitment/:jobId"
+            element={
+              <ProtectedRoute>
+                <JobRecruitment />
+              </ProtectedRoute>
+            }
+            handle={{
+              crumb: (pathName: string) => ({
+                text: 'Recrutamento da vaga',
                 to: pathName,
               }),
             }}

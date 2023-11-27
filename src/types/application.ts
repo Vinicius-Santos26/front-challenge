@@ -1,3 +1,4 @@
+import { Candidate } from "./candidate";
 import { Job } from "./job";
 import { RecruitmentFlowStep } from "./recruitmentFlowStep";
 
@@ -16,4 +17,12 @@ export type Application = {
   feedback: string;
   job: Job;
   recruitmentFlowStep : RecruitmentFlowStep;
+  candidate: Candidate;
 };
+
+
+export type UpdateApplicationDto = {
+  currentStepId: string | undefined;
+  feedback: string | undefined;
+  reprovedAt: Date | undefined;
+}
