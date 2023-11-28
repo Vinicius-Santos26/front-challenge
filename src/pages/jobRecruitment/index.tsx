@@ -109,7 +109,8 @@ export function JobRecruitment() {
   const [steps, setSteps] = useState<RecruitmentFlowStep[]>([]);
 
   useEffect(() => {
-    setSteps(job!.recruitmentFlow?.recruitmentFlowSteps);
+    if(job)
+      setSteps(job.recruitmentFlow.recruitmentFlowSteps);
   }, [job]);
 
   function handleOpenModalEdicao(app: Application) {
@@ -206,6 +207,7 @@ export function JobRecruitment() {
 
           <Divider marginY="6" />
           <VStack alignItems="left">
+            {applications?.length === 0 && <Text>Nenhuma aplicação na vaga</Text>}
             {applications?.map((app) => (
               <Card fontWeight="normal" padding="2" width="md">
                 <CardHeader padding="1">

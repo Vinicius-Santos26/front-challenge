@@ -5,6 +5,7 @@ import {
   CardBody,
   CardFooter,
   CardHeader,
+  Flex,
   HStack,
   Heading,
   LinkBox,
@@ -36,13 +37,13 @@ export function JobCard(props: JobCardProps) {
           <LinkOverlay as={Link} to={role === Role.CANDIDATE ? `/dashboard/jobs/${job.id}`: `/dashboard/jobs/recruitment/${job.id}`}>
             <Heading size="md">
               {job.position.name}
-              <HStack spacing="4">
+              <Flex gap="4" flexWrap="wrap">
                 {job.jobSocialVulnerabilities.map((v) => (
                   <Badge key={v.name} colorScheme={v.color}>
                     {v.name}{" "}
                   </Badge>
                 ))}
-              </HStack>
+              </Flex>
             </Heading>
             <Text>
               {job.jobLevel.name} - {job.quantity} vaga
