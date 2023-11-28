@@ -3,3 +3,8 @@ export type Position = {
   name: string,
   companyId: string
 }
+
+export type CreatePositionDto  = {
+  name: string;
+  companyId: string;
+}
